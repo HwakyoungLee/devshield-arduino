@@ -24,8 +24,6 @@ const uint8_t MY_PRODUCT_ID[16] =  { 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 // DO NOT CHANGE DEFINES BELOW THIS LINE
 
 #define nSSEL_PIN 10
-#define BC_EUI64_SIZE_BYTES 8
-#define BC_CLAIMCODE_SIZE_BYTES 20
 
 int counter;
 
@@ -57,6 +55,8 @@ void loop()
   uint8_t commandBuffer[20];
   uint16_t commandSize;
   uint8_t commandID;
+  int8_t rssi;
+  uint8_t lqi;
 
   delay(1000);
 
@@ -222,5 +222,19 @@ void loop()
   {
     Serial.println("getEUI64(BC_EUI64_COORDINATOR) returned false.");
   }
+
+  if (BERGCloud.getSignalQuality(&rssi, &lqi))
+  {
+    Serial.print("Last-hop signal quality: RSSI ");
+    Serial.print(rssi, DEC);
+    Serial.print(" dBm, LQI ");
+    Serial.print(lqi, DEC);
+    Serial.println("/255");
+  }
+  else
+  {
+    Serial.println("getSignalQuality returned false.");
+  }
+
 }
 

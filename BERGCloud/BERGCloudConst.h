@@ -24,6 +24,8 @@ THE SOFTWARE.
 
 */
 
+#define BC_EUI64_SIZE_BYTES 8
+#define BC_CLAIMCODE_SIZE_BYTES 20
 
 /*
  * Network layer

@@ -75,6 +75,7 @@ public:
   bool sendEvent(uint8_t eventCode, uint8_t *pEventBuffer, uint16_t eventSize);
   bool setLogOutput(bool logError, bool logData);
   bool getNetworkState(uint8_t *pState);
+  bool getSignalQuality(int8_t *pRssi, uint8_t *pLqi);
   bool joinNetwork(const uint8_t productID[16] = nullProductID, uint32_t version = 0);
   bool getClaimingState(uint8_t *pState);
   bool getClaimcode(char *pBuffer, uint32_t bufferSize);

@@ -392,6 +392,41 @@ bool CBERGCloudBase::getNetworkState(uint8_t *pState)
   return (m_lastResponse == SPI_RSP_SUCCESS);
 }
 
+bool CBERGCloudBase::getSignalQuality(int8_t *pRssi, uint8_t *pLqi)
+{
+  uint16_t rxDataSize;
+  uint8_t rxDataBuffer[2];
+  _BC_TRANSACTION tr;
+
+  tr.command = SPI_CMD_GET_SIGNAL_QUALITY;
+  tr.pTx = NULL;
+  tr.txSize = 0;
+  tr.pResponse = &m_lastResponse;
+  tr.pRx = rxDataBuffer;
+  tr.rxMaxSize = 2;
+  tr.pRxSize = &rxDataSize;
+
+  if (!transaction(&tr))
+  {
+    return false;
+  }
+
+  if (m_lastResponse == SPI_RSP_SUCCESS)
+  {
+    if (pRssi != NULL)
+    {
+      *(uint8_t *)pRssi = rxDataBuffer[0];
+    }
+
+    if (pLqi != NULL)
+    {
+      *pLqi = rxDataBuffer[1];
+    }
+  }
+
+  return (m_lastResponse == SPI_RSP_SUCCESS);
+}
+
 bool CBERGCloudBase::joinNetwork(const uint8_t productID[16], uint32_t version)
 {
   uint8_t tmp[16 + sizeof(version)];
