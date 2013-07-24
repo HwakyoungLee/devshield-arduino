@@ -24,30 +24,44 @@ THE SOFTWARE.
 
 */
 
-
 #ifndef BUFFER_H
 #define BUFFER_H
 
-//#include "BERGCloudConfig.h"
+#define __STDC_LIMIT_MACROS /* Include C99 stdint defines in C++ code */
+#include <stdint.h>
 
 /* Default buffer size */
 #ifndef BUFFER_SIZE_BYTES
-#define BUFFER_SIZE_BYTES 128
+#define BUFFER_SIZE_BYTES 64
 #endif
 
 class CBuffer
 {
 public:
-  CBuffer(void);
-  ~CBuffer(void);
-  bool addToBuffer(uint8_t data);
-  bool removeFromBuffer(uint8_t *data);
-  uint16_t getBufferFreeSpace(void);
-  uint16_t getBufferDataRemaining(void);
-  void clearBuffer(void);
+  CBuffer();
+  uint16_t size(void);
+  uint8_t *ptr(void);
+  void clear(void);
+
+
+  /* Methods for writing to the buffer */
+  uint16_t used(void);
+  void used(uint16_t used);
+  uint16_t available(void);
+  bool available(uint16_t required);
+  void add(uint8_t data);
+
+  /* Methods for reading from the buffer */
+  bool peek(uint8_t *data);
+  uint8_t read(void);
+  uint16_t remaining(void);
+  bool remaining(uint16_t required);
+  void restart(void);
+
+protected:
   uint8_t m_data[BUFFER_SIZE_BYTES];
-  uint16_t m_read;
   uint16_t m_written;
+  uint16_t m_read;
 };
 
 #endif // #ifndef BUFFER_H

@@ -32,15 +32,15 @@ THE SOFTWARE.
 
 #include "BERGCloudArduino.h"
 
-CBERGCloudArduino BERGCloud;
+CBERGCloud BERGCloud;
 
-uint16_t CBERGCloudArduino::SPITransaction(uint8_t *pDataOut, uint8_t *pDataIn, uint16_t dataSize, bool finalCS)
+uint16_t CBERGCloud::SPITransaction(uint8_t *pDataOut, uint8_t *pDataIn, uint16_t dataSize, bool finalCS)
 {
   uint16_t i;
 
   if ( (pDataOut == NULL) || (pDataIn == NULL) || (m_pSPI == NULL) )
   {
-    _LOG_ERROR("Invalid parameter (CBERGCloudArduino::SPITransaction)\r\n");
+    _LOG("Invalid parameter (CBERGCloudArduino::SPITransaction)\r\n");
     return 0;
   }
 
@@ -59,17 +59,17 @@ uint16_t CBERGCloudArduino::SPITransaction(uint8_t *pDataOut, uint8_t *pDataIn, 
   return dataSize;
 }
 
-void CBERGCloudArduino::timerReset(void)
+void CBERGCloud::timerReset(void)
 {
   m_resetTime = millis();
 }
 
-uint32_t CBERGCloudArduino::timerRead_mS(void)
+uint32_t CBERGCloud::timerRead_mS(void)
 {
   return millis() - m_resetTime;
 }
 
-void CBERGCloudArduino::begin(SPIClass *pSPI, uint8_t nSSELPin)
+void CBERGCloud::begin(SPIClass *pSPI, uint8_t nSSELPin)
 {
   /* Call base class method */
   CBERGCloudBase::begin();
@@ -83,7 +83,7 @@ void CBERGCloudArduino::begin(SPIClass *pSPI, uint8_t nSSELPin)
 
   if (m_pSPI == NULL)
   {
-    _LOG_ERROR("pSPI is NULL (CBERGCloudArduino::begin)\r\n");
+    _LOG("pSPI is NULL (CBERGCloudArduino::begin)\r\n");
     return;
   }
 
@@ -93,7 +93,7 @@ void CBERGCloudArduino::begin(SPIClass *pSPI, uint8_t nSSELPin)
   m_pSPI->setClockDivider(SPI_CLOCK_DIV4);
 }
 
-void CBERGCloudArduino::end()
+void CBERGCloud::end()
 {
   /* Deconfigure SPI */
   if (m_pSPI != NULL)
@@ -108,20 +108,57 @@ void CBERGCloudArduino::end()
   CBERGCloudBase::end();
 }
 
-#ifdef _BC_LOG
-
-void CBERGCloudArduino::logPrintf(const char *format, ...)
+bool CBERGCloud::print(String& s)
 {
-  /* Implementation of printf() for Arduino */
-  va_list argList;
+  uint8_t text[BC_MAX_PRINT_CHARS + 1]; /* +1 for null terminator */
 
-  va_start(argList, format);
-  vsnprintf(m_logText, sizeof(m_logText), format, argList);
-  va_end(argList);
+  /* Convert to C string */
+  s.getBytes(text, sizeof(text));
 
-  Serial.print(m_logText);
+  /* Print */
+  return print((const char *)text);
 }
 
-#endif // #ifdef _BC_LOG
+#ifdef BERGCLOUD_PACK_UNPACK
+
+bool CMessage::pack(String& s)
+{
+  uint16_t strLen = s.length();
+  uint32_t i = 1; /* Character index starts at one */
+
+  /* Add header */
+  if (!pack_raw_header(strLen))
+  {
+    return false;
+  }
+
+  /* Add data */
+  while (strLen-- > 0)
+  {
+    add((uint8_t)s.charAt(i++));
+  }
+
+  return true;
+}
+
+bool CMessage::unpack(String& s)
+{
+  uint16_t sizeInBytes;
+
+  if (!unpack_raw_header(&sizeInBytes))
+  {
+    return false;
+  }
+
+  s = ""; /* Empty string */
+  while (sizeInBytes-- > 0)
+  {
+    s += (char)read();
+  }
+
+  return true;
+}
+
+#endif // #ifdef BERGCLOUD_PACK_UNPACK
 
 #endif // #ifdef ARDUINO

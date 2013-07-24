@@ -24,65 +24,94 @@ THE SOFTWARE.
 
 */
 
-
-#include <stdint.h>
-
-
-#include <stdio.h> // TODO TEMP
-
 #include "Buffer.h"
 
 CBuffer::CBuffer(void)
 {
-  clearBuffer();
+  clear();
 }
 
-CBuffer::~CBuffer(void)
+void CBuffer::clear(void)
 {
+  m_written = 0; /* Number of bytes written */
+  m_read = 0;    /* Number of bytes read */
 }
 
-bool CBuffer::addToBuffer(uint8_t data)
+void CBuffer::restart(void)
 {
-  /* Add byte to buffer */
-  if (m_written < sizeof(m_data))
-  {
+  /* Restart reading from the beginning */
+  m_read = 0;
+}
+
+uint16_t CBuffer::size(void)
+{
+  /* Get total size of the buffer */
+  return BUFFER_SIZE_BYTES;
+}
+
+uint16_t CBuffer::used(void)
+{
+  /* Get mumber of bytes used in the buffer */
+  return m_written;
+}
+
+void CBuffer::used(uint16_t used)
+{
+  /* Set number of bytes used in the buffer */
+  m_written = used;
+}
+
+uint16_t CBuffer::available(void)
+{
+  /* Get space available in the buffer */
+  return BUFFER_SIZE_BYTES - m_written;
+}
+
+bool CBuffer::available(uint16_t required)
+{
+  /* Test if space is available for the number of bytes required */
+  return (BUFFER_SIZE_BYTES - m_written) >= required;
+}
+
+void CBuffer::add(uint8_t data)
+{
+  /* Write a byte to the buffer; no checks */
     m_data[m_written++] = data;
-    return true;
+}
+
+bool CBuffer::peek(uint8_t *data)
+{
+  /* Peek at the next byte in the buffer */
+  if (m_read >= m_written)
+  {
+    /* No more data */
+    return false;
   }
 
-  /* Buffer is full */
-  return false;
+  
+  *data = m_data[m_read]; /* No increment */
+  return true;
 }
 
-uint16_t CBuffer::getBufferFreeSpace(void)
+uint8_t CBuffer::read(void)
 {
-  /* Return space available in buffer in bytes */
-  return sizeof(m_data) - m_written;
+  /* Read the next byte from the buffer; no checks */
+  return m_data[m_read++];
 }
 
-uint16_t CBuffer::getBufferDataRemaining(void)
+uint16_t CBuffer::remaining(void)
 {
-  /* Return unused data remaining in bytes */
+  /* Returns the number of bytes that have been written but not read */
   return m_written - m_read;
 }
 
-bool CBuffer::removeFromBuffer(uint8_t *data)
+bool CBuffer::remaining(uint16_t required)
 {
-  /* Remove byte from buffer */
-  if (m_read < m_written)
-  {
-    *data = m_data[m_read++];
-    printf("0x%02x\n", *data);
-    return true;
-  }
-
-  /* No more data */
-  return false;
+  /* Test if data is remaining for the number of bytes required */
+  return (m_written - m_read) >= required;
 }
 
-void CBuffer::clearBuffer(void)
+uint8_t *CBuffer::ptr(void)
 {
-  /* Empty buffer */
-  m_read = 0;
-  m_written = 0;
+  return m_data;
 }

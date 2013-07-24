@@ -1,7 +1,9 @@
 /*
-    SimpleCounter - A simple demonstration of how you use the BERG Cloud Arduino
-                    client libraries to fetch and send data to BERG Cloud. For
-                    more info see http://bergcloud.com/
+    SimpleCounterPacked - A simple demonstration of how you use the
+                          BERG Cloud Arduino client libraries to
+                          fetch and send automatically packed data
+                          to BERG Cloud. For more info see
+                          http://bergcloud.com/
 
     This example code is in the public domain.
 
@@ -26,7 +28,7 @@ const uint8_t MY_PRODUCT_ID[16] =  { 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 #define nSSEL_PIN 10
 
 int counter;
-
+  
 void setup()
 {
   Serial.begin(115200);
@@ -46,36 +48,47 @@ void setup()
 
 void loop()
 {
-  uint32_t data;
   uint8_t a;
   uint8_t eui64[BC_EUI64_SIZE_BYTES];
   char claimcode[BC_CLAIMCODE_SIZE_BYTES];
-  uint8_t temp[10];
   uint32_t i;
-  uint8_t commandBuffer[20];
-  uint16_t commandSize;
   uint8_t commandID;
   int8_t rssi;
   uint8_t lqi;
-
+  CMessage command, event;
+  String text;
+  unsigned int value;
+  
   delay(1000);
 
   Serial.print("Poll for command... ");
-  if (BERGCloud.pollForCommand(commandBuffer, sizeof(commandBuffer), commandSize, commandID))
+  if (BERGCloud.pollForCommand(command, commandID))
   {
-    // In this example we have no specific command behaviour written, so
-    // we simply print out the contents of the command payload to console
-    
+  
     Serial.print("Got command 0x");
     Serial.print(commandID, HEX);
-    Serial.print(" with data length ");
-    Serial.print(commandSize, DEC);
-    Serial.println(" bytes.");
+    Serial.println(" containing:");
 
-    for (i=0; i<commandSize; i++)
+    command.print();
+
+    if (command.unpack(value))
     {
-      Serial.print("0x");
-      Serial.println(commandBuffer[i], HEX);
+      Serial.print("got value = ");
+      Serial.println(value);
+    }
+    else
+    {
+      Serial.println("unpack(int) returned false.");
+    }
+
+    if (command.unpack(text))
+    {
+      Serial.print("got text = ");
+      Serial.println(text);
+    }
+    else
+    {
+      Serial.println("unpack(text) returned false.");
     }
   }
   else
@@ -86,23 +99,13 @@ void loop()
   delay(1000);
 
   Serial.print("Sending an event... ");
-
-  // Our event consists of 8 bytes, the first four spell out BERG,
-  // and the second 4 make up an int32 counter value we increment
-  // inside this main loop
   
-  temp[0] = 'B';
-  temp[1] = 'E';
-  temp[2] = 'R';
-  temp[3] = 'G';
-  temp[4] = counter >> 24;
-  temp[5] = counter >> 16;
-  temp[6] = counter >> 8;
-  temp[7] = counter;
-
+  event.pack("BERG");
+  event.pack(counter);
+ 
   counter++;
 
-  if (BERGCloud.sendEvent(EXAMPLE_EVENT_ID, temp, 8))
+  if (BERGCloud.sendEvent(EXAMPLE_EVENT_ID, event))
   {
     Serial.println("ok");
   }
@@ -235,6 +238,5 @@ void loop()
   {
     Serial.println("getSignalQuality returned false.");
   }
-
 }
 

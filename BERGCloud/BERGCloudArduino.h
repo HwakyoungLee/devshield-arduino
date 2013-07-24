@@ -32,11 +32,18 @@ THE SOFTWARE.
 
 #include "BERGCloudBase.h"
 
-class CBERGCloudArduino : public CBERGCloudBase
+#ifdef BERGCLOUD_PACK_UNPACK
+#include "MessageBase.h"
+#endif
+
+class CBERGCloud : public CBERGCloudBase
 {
 public:
   void begin(SPIClass *_pSPI, uint8_t _nSSELPin);
   void end();
+  using CBERGCloudBase::print;
+/* Methods using Arduino string class */
+  bool print(String& s);
 private:
   uint16_t SPITransaction(uint8_t *pDataOut, uint8_t *pDataIn, uint16_t dataSize, bool finalCS);
   void timerReset(void);
@@ -44,17 +51,22 @@ private:
   uint8_t m_nSSELPin;
   SPIClass *m_pSPI;
   uint32_t m_resetTime;
-
-#ifdef _BC_LOG
-
-protected:
-  void logPrintf(const char *format, ...);
-  char m_logText[_BC_LOG_LINE_LENGTH + 1]; /* +1 for null terminator */
-
-#endif // #ifdef _BC_LOG
-
 };
 
-extern CBERGCloudArduino BERGCloud;
+#ifdef BERGCLOUD_PACK_UNPACK
+
+class CMessage : public CMessageBase
+{
+public:
+  using CMessageBase::pack;
+  using CMessageBase::unpack;
+  /* Methods using Arduino string class */
+  bool pack(String& s);
+  bool unpack(String& s);
+};
+
+#endif // #ifdef BERGCLOUD_PACK_UNPACK
+
+extern CBERGCloud BERGCloud;
 
 #endif // #ifndef BERGCLOUDARDUINO_H

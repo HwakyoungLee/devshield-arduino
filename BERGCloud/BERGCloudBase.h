@@ -30,56 +30,36 @@ THE SOFTWARE.
 
 #include "BERGCloudConfig.h"
 #include "BERGCloudConst.h"
-
-#ifdef BERGCLOUD_LOG
-#define _BC_LOG
-#endif
-
-#ifdef _BC_LOG
-#define _LOG(...)       logPrintf(__VA_ARGS__);
-#define _LOG_ERROR(...) if (m_logError) { logPrintf(__VA_ARGS__); }
-#define _LOG_DATA(...)  if (m_logData)  { logPrintf(__VA_ARGS__); }
-#else
-#define _LOG(...)
-#define _LOG_ERROR(...)
-#define _LOG_DATA(...)
-#endif
+#include "Buffer.h"
+#include "LogPrint.h"
 
 #define BERGCLOUD_LIB_VERSION (0x0100)
-#define _BC_LOG_LINE_LENGTH (80)
 #define MAX_SERIAL_DATA (64)
 
 typedef struct {
   uint8_t command;
   uint8_t *pTx;
   uint16_t txSize;
-  uint8_t *pResponse;
   uint8_t *pRx;
   uint16_t rxMaxSize;
   uint16_t *pRxSize;
+  uint16_t *pTxParam;
+  uint16_t *pRxParam;
 } _BC_TRANSACTION;
-
-#ifdef _BC_LOG
-
-typedef struct {
-  uint8_t value;
-  const char *text;
-} _BC_STATUS_MAP;
-
-#endif // #ifdef _BC_LOG
 
 class CBERGCloudBase
 {
 public:
-  bool pollForCommand(uint8_t *pCommandBuffer, uint16_t commandBufferSize, uint16_t *pCommandSize, uint8_t *pCommandID);
+  bool pollForCommand(uint8_t *pCommandBuffer, uint16_t commandBufferSize, uint16_t& commandSize, uint8_t& commandID);
+  bool pollForCommand(CBuffer& buffer, uint8_t& commandID);
   bool sendEvent(uint8_t eventCode, uint8_t *pEventBuffer, uint16_t eventSize);
-  bool setLogOutput(bool logError, bool logData);
-  bool getNetworkState(uint8_t *pState);
-  bool getSignalQuality(int8_t *pRssi, uint8_t *pLqi);
+  bool sendEvent(uint8_t eventCode, CBuffer& buffer);
+  bool getNetworkState(uint8_t& state);
+  bool getSignalQuality(int8_t& rssi, uint8_t& lqi);
   bool joinNetwork(const uint8_t productID[16] = nullProductID, uint32_t version = 0);
-  bool getClaimingState(uint8_t *pState);
-  bool getClaimcode(char *pBuffer, uint32_t bufferSize);
-  bool getEUI64(uint8_t type, uint8_t *pBuffer, uint32_t bufferSize);
+  bool getClaimingState(uint8_t& state);
+  bool getClaimcode(char claimcode[BC_CLAIMCODE_SIZE_BYTES]);
+  bool getEUI64(uint8_t type, uint8_t eui64[BC_EUI64_SIZE_BYTES]);
   bool setDisplayStyle(uint8_t style);
   bool print(const char *pText);
   uint8_t m_lastResponse;
@@ -94,21 +74,9 @@ protected:
 private:
   uint16_t Crc16(uint8_t data, uint16_t crc);
   uint8_t SPITransaction(uint8_t data, bool finalCS);
+  void initTransaction(_BC_TRANSACTION *pTr);
   bool transaction(_BC_TRANSACTION *tr);
   bool m_synced;
-
-#ifdef _BC_LOG
-
-protected:
-  virtual void logPrintf(const char *format, ...) = 0;
-  bool m_logError;
-  bool m_logData;
-private:
-  static const _BC_STATUS_MAP statusTextMap[];
-  const char *getStatusText(uint8_t value);
-
-#endif // #ifdef _BC_LOG
-
 };
 
 #endif // #ifndef BERGCLOUDBASE_H

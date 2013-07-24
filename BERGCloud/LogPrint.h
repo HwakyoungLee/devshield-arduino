@@ -1,6 +1,6 @@
 /*
 
-BERGCloud compile-time configuration options
+LogPrint.h
 
 Copyright (c) 2013 BERG Ltd. http://bergcloud.com/
 
@@ -24,14 +24,25 @@ THE SOFTWARE.
 
 */
 
+#ifndef LOGPRINT_H
+#define LOGPRINT_H
 
-#ifndef BERGCLOUDCONFIG_H
-#define BERGCLOUDCONFIG_H
+#ifdef BERGCLOUD_LOG
+#ifdef ARDUINO
+#include <Arduino.h>
+// Workaround for http://gcc.gnu.org/bugzilla/show_bug.cgi?id=34734
+// Credit: http://forum.arduino.cc/index.php/topic,85840.0.html
+#ifdef PROGMEM
+#undef PROGMEM
+#define PROGMEM __attribute__((section(".progmem.data")))
+#endif // #ifdef PROGMEM
+#define _LOG(x) Serial.print(F(x))
+#else // #ifdef ARDUINO
+#include <stdio.h>
+#define _LOG(x) printf(x);
+#endif // #ifdef ARDUINO
+#else // #ifdef BERGCLOUD_LOG
+#define _LOG(x)
+#endif // #ifdef BERGCLOUD_LOG
 
-/* Include debug logging */
-#define BERGCLOUD_LOG
-
-/* Include pack/unpack */
-#define BERGCLOUD_PACK_UNPACK
-
-#endif // #ifndef BERGCLOUDCONFIG_H
+#endif // #ifndef LOGPRINT_H
