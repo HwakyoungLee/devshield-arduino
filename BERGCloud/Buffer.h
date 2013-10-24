@@ -43,7 +43,6 @@ public:
   uint8_t *ptr(void);
   void clear(void);
 
-
   /* Methods for writing to the buffer */
   uint16_t used(void);
   void used(uint16_t used);

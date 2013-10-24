@@ -42,7 +42,7 @@ public:
   void begin(SPIClass *_pSPI, uint8_t _nSSELPin);
   void end();
   using CBERGCloudBase::print;
-/* Methods using Arduino string class */
+  /* Methods using Arduino string class */
   bool print(String& s);
 private:
   uint16_t SPITransaction(uint8_t *pDataOut, uint8_t *pDataIn, uint16_t dataSize, bool finalCS);
@@ -60,9 +60,13 @@ class CMessage : public CMessageBase
 public:
   using CMessageBase::pack;
   using CMessageBase::unpack;
+  /* Pack a 4-byte double */
+  bool pack(double& n);
   /* Methods using Arduino string class */
   bool pack(String& s);
   bool unpack(String& s);
+  /* Print the raw bytes of a message */
+  void print_bytes(void);
 };
 
 #endif // #ifdef BERGCLOUD_PACK_UNPACK

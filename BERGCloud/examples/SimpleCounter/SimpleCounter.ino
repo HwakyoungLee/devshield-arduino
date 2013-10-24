@@ -14,8 +14,10 @@
 // These values should be edited to reflect your Product setup on bergcloud.com
 
 #define MY_PRODUCT_VERSION 0x00000001
-const uint8_t MY_PRODUCT_ID[16] =  { 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-                                     0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 };
+
+const uint8_t MY_PRODUCT_ID[BC_PRODUCT_ID_SIZE_BYTES] =  \
+    { 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+      0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 };
 
 // Define your commands and events here, according to the schema from bergcloud.com
 
@@ -25,7 +27,7 @@ const uint8_t MY_PRODUCT_ID[16] =  { 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 
 #define nSSEL_PIN 10
 
-int counter;
+uint32_t counter;
 
 void setup()
 {
@@ -46,9 +48,9 @@ void setup()
 
 void loop()
 {
-  uint32_t data;
   uint8_t a;
   uint8_t eui64[BC_EUI64_SIZE_BYTES];
+  uint8_t address[BC_ADDRESS_SIZE_BYTES];
   char claimcode[BC_CLAIMCODE_SIZE_BYTES];
   uint8_t temp[10];
   uint32_t i;
@@ -234,6 +236,24 @@ void loop()
   else
   {
     Serial.println("getSignalQuality returned false.");
+  }
+
+  if (BERGCloud.getBERGCloudAddress(address))
+  {
+    Serial.print("BERGCloud Address: 0x");
+    for (i=0; i < sizeof(address); i++)
+    {
+      if (address[7-i] < 0x10)
+      {
+        Serial.print("0");
+      }
+      Serial.print(address[7-i], HEX);
+    }
+    Serial.println("");
+  }
+  else
+  {
+    Serial.println("getBERGCloudAddress() returned false.");
   }
 
 }

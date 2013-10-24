@@ -110,7 +110,7 @@ void CBERGCloud::end()
 
 bool CBERGCloud::print(String& s)
 {
-  uint8_t text[BC_MAX_PRINT_CHARS + 1]; /* +1 for null terminator */
+  uint8_t text[BC_PRINT_MAX_CHARS + 1]; /* +1 for null terminator */
 
   /* Convert to C string */
   s.getBytes(text, sizeof(text));
@@ -120,6 +120,20 @@ bool CBERGCloud::print(String& s)
 }
 
 #ifdef BERGCLOUD_PACK_UNPACK
+
+bool CMessage::pack(double& n)
+{
+  /* For 16-bit Arduino platforms we can treat a double literal */
+  /* value as as float; this is so pack(1.234) will work. */
+
+  if (sizeof(double) == sizeof(float))
+  {
+     return pack((float)n);
+  }
+
+   _LOG("Pack: 8-byte double type is not supported.\r\n");
+  return false;
+}
 
 bool CMessage::pack(String& s)
 {
@@ -150,6 +164,12 @@ bool CMessage::unpack(String& s)
     return false;
   }
 
+  if (!remaining(sizeInBytes))
+  {
+    _LOG_UNPACK_ERROR_NO_DATA;
+    return false;
+  }
+
   s = ""; /* Empty string */
   while (sizeInBytes-- > 0)
   {
@@ -157,6 +177,23 @@ bool CMessage::unpack(String& s)
   }
 
   return true;
+}
+
+void CMessage::print_bytes(void)
+{
+  uint16_t size = CBuffer::used();
+  uint8_t *data = CBuffer::ptr();
+
+  while (size-- > 0)
+  {
+    if (*data < 0x10)
+    {
+      Serial.print("0");
+    }
+    Serial.print(*data++, HEX);
+    Serial.print(" ");
+  }
+  Serial.println();
 }
 
 #endif // #ifdef BERGCLOUD_PACK_UNPACK

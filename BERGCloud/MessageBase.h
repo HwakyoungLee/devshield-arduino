@@ -33,6 +33,12 @@ THE SOFTWARE.
 #include "Buffer.h"
 #include "LogPrint.h"
 
+#define _LOG_PACK_ERROR_NO_SPACE    _LOG("Pack: Out of space.\r\n")
+#define _LOG_UNPACK_ERROR_TYPE      _LOG("Unpack: Can't convert to this variable type.\r\n")
+#define _LOG_UNPACK_ERROR_NO_DATA   _LOG("Unpack: No more data.\r\n")
+
+#define IN_RANGE(value, min, max) ((value >= min) && (value <= max))
+
 class CMessageBase : public CBuffer
 {
 public:
@@ -56,7 +62,7 @@ public:
   bool pack(int32_t n);
   /* Pack a float */
   bool pack(float n);
-  /* pack a boolean */
+  /* Pack a boolean */
   bool pack(bool n);
 
   /* Pack a nil type */
@@ -114,6 +120,8 @@ public:
   bool unpack_restart();
   /* Moves to the value associated with the map key 'key' */
   bool unpack_find(const char *key);
+  /* Moves to the value associated with array index 'i' */
+  bool unpack_find(uint16_t i);
 
   /* Unpack a null-terminated C string */
   bool unpack(char *pString, uint32_t maxSizeInBytes);

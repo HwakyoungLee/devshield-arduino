@@ -30,12 +30,6 @@ THE SOFTWARE.
 #include <string.h> /* For memcpy() */
 #include "MessageBase.h"
 
-#define _LOG_PACK_ERROR_NO_SPACE    _LOG("Pack: Out of space.\r\n")
-#define _LOG_UNPACK_ERROR_TYPE      _LOG("Unpack: Can't convert to this variable type.\r\n")
-#define _LOG_UNPACK_ERROR_NO_DATA   _LOG("Unpack: No more data.\r\n")
-
-#define IN_RANGE(value, min, max) ((value >= min) && (value <= max))
-
 CMessageBase::CMessageBase(void)
 {
 }
@@ -417,7 +411,7 @@ bool CMessageBase::unpack_peek(void)
     return false;
   }
 
-  if (IN_RANGE(type, _MP_FIXNUM_POS_MIN, _MP_FIXNUM_POS_MAX))
+  if (type <= _MP_FIXNUM_POS_MAX)
   {
     _LOG("Positive integer\r\n");
     return true;
@@ -534,7 +528,7 @@ bool CMessageBase::getUnsignedInteger(uint32_t *pValue, uint8_t maxBytes)
     return false;
   }
 
-  if (IN_RANGE(type, _MP_FIXNUM_POS_MIN, _MP_FIXNUM_POS_MAX))
+  if (type <= _MP_FIXNUM_POS_MAX)
   {
     /* Read fix num value */
     *pValue = read();
@@ -630,7 +624,7 @@ bool CMessageBase::getSignedInteger(int32_t *pValue, uint8_t maxBytes)
     return false;
   }
 
-  if (IN_RANGE(type, _MP_FIXNUM_POS_MIN, _MP_FIXNUM_POS_MAX))
+  if (type <= _MP_FIXNUM_POS_MAX)
   {
     /* Read fix num value */
     *pValue = (int32_t)read();
@@ -1189,6 +1183,12 @@ bool CMessageBase::unpack(char *pString, uint32_t maxSizeInBytes)
     return false;
   }
 
+  if (!remaining(sizeInBytes))
+  {
+    _LOG_UNPACK_ERROR_NO_DATA;
+    return false;
+  }
+
   if (!unpack_raw_data((uint8_t *)pString, sizeInBytes, maxSizeInBytes - 1)) /* -1 to allow space for null terminator */
   {
     return false;
@@ -1208,6 +1208,12 @@ bool CMessageBase::unpack(uint8_t *pData, uint32_t maxSizeInBytes, uint32_t *pSi
 
   if (!unpack_raw_header(&sizeInBytes))
   {
+    return false;
+  }
+
+  if (!remaining(sizeInBytes))
+  {
+    _LOG_UNPACK_ERROR_NO_DATA;
     return false;
   }
 
@@ -1282,6 +1288,64 @@ bool CMessageBase::unpack_find(const char *key)
     else
     {
       /* Not a map */
+      unpack_skip();
+    }
+  }
+
+  /* Not found; return to last position */
+  m_read = last_read;
+  return false;
+}
+
+bool CMessageBase::unpack_find(uint16_t i)
+{
+  /* Search for an index in an array; in this simple */
+  /* implementation arrays cannot contain maps or arrays */
+  uint16_t last_read;
+  uint16_t array_items;
+  uint16_t item;
+  uint8_t type;
+
+  /* Remember the current read position in the raw data */
+  last_read = m_read;
+
+  /* Start reading from the beginning of the data */
+  restart();
+
+  while(peek(&type))
+  {
+    if (IN_RANGE(type, _MP_FIXARRAY_MIN, _MP_FIXARRAY_MAX) || (type == _MP_ARRAY16)) /* _MP_ARRAY32 not yet supported */
+    {
+      /* Array found, get number of items */
+      unpack_array(array_items);
+
+      /* Assume items are numbered starting from one */
+      item = 1;
+
+      if (i == 0)
+      {
+        _LOG("Unpack: Array indexes start from 1.\r\n");
+        return false;
+      }
+
+      /* Iterate through the values in the array */
+      while (array_items-- > 0)
+      {
+        if (item++ == i)
+        {
+            /* Found it */
+            return true;
+        }
+        else
+        {
+          /* Skip this item */
+          unpack_skip();
+        }
+      }
+    }
+    else
+    {
+      /* Not an array */
       unpack_skip();
     }
   }
