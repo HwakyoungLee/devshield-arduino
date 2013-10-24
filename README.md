@@ -10,7 +10,7 @@ Copy the BERGCloud/ directory into your Arduino libraries folder.
 
 ## Copyright
 
-Copyright (c) 2013 BERG Ltd. See LICENSE.txt for further details.
+Copyright (c) 2013 BERG Cloud Ltd. See LICENSE.txt for further details.
 
 Any example code is released into the public domain.
 
