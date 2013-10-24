@@ -1,6 +1,7 @@
-# BERG Cloud Arduino library
+BERG Cloud for Arduino
+======================
 
-The Arduino client libraries to communicate with the BERG Cloud Devboard. For more information
+This repository contains the Arduino libraries to communicate with the BERG Cloud Devshield. For more information
 see http://bergcloud.com/devkit/
 
 ## Installation
