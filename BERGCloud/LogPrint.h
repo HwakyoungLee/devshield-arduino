@@ -37,9 +37,11 @@ THE SOFTWARE.
 #define PROGMEM __attribute__((section(".progmem.data")))
 #endif // #ifdef PROGMEM
 #define _LOG(x) Serial.print(F(x))
+#define _LOG_HEX(x) if ((x) < 0x10) Serial.print(F("0")); Serial.print((x), HEX)
 #else // #ifdef ARDUINO
 #include <stdio.h>
-#define _LOG(x) printf(x);
+#define _LOG(x) printf(x)
+#define _LOG_HEX(x) printf("%02X", (x))
 #endif // #ifdef ARDUINO
 #else // #ifdef BERGCLOUD_LOG
 #define _LOG(x)

@@ -13,9 +13,11 @@
 
 // These values should be edited to reflect your Product setup on bergcloud.com
 
-#define MY_PRODUCT_VERSION 0x00000001
-const uint8_t MY_PRODUCT_ID[16] =  { 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-                                     0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 };
+#define PRODUCT_VERSION 0x00000001
+
+const uint8_t PRODUCT_KEY[BC_PRODUCT_KEY_SIZE_BYTES] =  \
+    { 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+      0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 };
 
 // Define your commands and events here, according to the schema from bergcloud.com
 
@@ -25,7 +27,7 @@ const uint8_t MY_PRODUCT_ID[16] =  { 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 
 #define nSSEL_PIN 10
 
-int counter;
+uint32_t counter;
 
 void setup()
 {
@@ -34,21 +36,21 @@ void setup()
   Serial.println("--- reset ---");
   counter = 0;
 
-  if (BERGCloud.joinNetwork(MY_PRODUCT_ID, MY_PRODUCT_VERSION))
+  if (BERGCloud.connect(PRODUCT_KEY, PRODUCT_VERSION))
   {
-    Serial.println("Joined/Rejoined network");
+    Serial.println("Connected to network");
   }
   else
   {
-    Serial.println("joinNetwork() returned false.");
+    Serial.println("connect() returned false.");
   }
 }
 
 void loop()
 {
-  uint32_t data;
   uint8_t a;
   uint8_t eui64[BC_EUI64_SIZE_BYTES];
+  uint8_t address[BC_ADDRESS_SIZE_BYTES];
   char claimcode[BC_CLAIMCODE_SIZE_BYTES];
   uint8_t temp[10];
   uint32_t i;
@@ -115,28 +117,28 @@ void loop()
 
   // The following method calls are examples of how you query the
   // network and BERG Cloud shield state from within your Arduino code
-  
-  if (BERGCloud.getNetworkState(a))
+
+  if (BERGCloud.getConnectionState(a))
   {
     switch(a)
     {
-    case BC_NETWORK_STATE_CONNECTED:
-      Serial.println("Network State: Connected");
+    case BC_CONNECT_STATE_CONNECTED:
+      Serial.println("Connection state: Connected");
       break;
-    case BC_NETWORK_STATE_CONNECTING:
-      Serial.println("Network State: Connecting...");
+    case BC_CONNECT_STATE_CONNECTING:
+      Serial.println("Connection state: Connecting...");
       break;
-    case BC_NETWORK_STATE_DISCONNECTED:
-      Serial.println("Network State: Disconnected");
+    case BC_CONNECT_STATE_DISCONNECTED:
+      Serial.println("Connection state: Disconnected");
       break;
     default:
-      Serial.println("Network State: Unknown!");
+      Serial.println("Connection state: Unknown!");
       break;
     }
   }
   else
   {
-    Serial.println("getNetworkState() returned false.");
+    Serial.println("getConnectionState() returned false.");
   }
 
   if (BERGCloud.getClaimingState(a))
@@ -234,6 +236,24 @@ void loop()
   else
   {
     Serial.println("getSignalQuality returned false.");
+  }
+
+  if (BERGCloud.getDeviceAddress(address))
+  {
+    Serial.print("Device Address: 0x");
+    for (i=0; i < sizeof(address); i++)
+    {
+      if (address[7-i] < 0x10)
+      {
+        Serial.print("0");
+      }
+      Serial.print(address[7-i], HEX);
+    }
+    Serial.println("");
+  }
+  else
+  {
+    Serial.println("getDeviceAddress() returned false.");
   }
 
 }
