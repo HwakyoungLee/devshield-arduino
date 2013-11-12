@@ -2,7 +2,7 @@
 
 BERGCloud library for Arduino
 
-Copyright (c) 2013 BERG Ltd. http://bergcloud.com/
+Copyright (c) 2013 BERG Cloud Ltd. http://bergcloud.com/
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -32,96 +32,100 @@ THE SOFTWARE.
 
 #include "BERGCloudArduino.h"
 
-CBERGCloud BERGCloud;
+BERGCloudArduino BERGCloud;
 
-uint16_t CBERGCloud::SPITransaction(uint8_t *pDataOut, uint8_t *pDataIn, uint16_t dataSize, bool finalCS)
+uint16_t BERGCloudArduino::SPITransaction(uint8_t *dataOut, uint8_t *dataIn, uint16_t dataSize, bool finalCS)
 {
   uint16_t i;
 
-  if ( (pDataOut == NULL) || (pDataIn == NULL) || (m_pSPI == NULL) )
+  if ( (dataOut == NULL) || (dataIn == NULL) || (spi == NULL) )
   {
     _LOG("Invalid parameter (CBERGCloudArduino::SPITransaction)\r\n");
     return 0;
   }
 
-  digitalWrite(m_nSSELPin, LOW);
+  digitalWrite(nSSELPin, LOW);
 
   for (i = 0; i < dataSize; i++)
   {
-    *pDataIn++ = m_pSPI->transfer(*pDataOut++);
+    *dataIn++ = spi->transfer(*dataOut++);
   }
 
   if (finalCS)
   {
-    digitalWrite(m_nSSELPin, HIGH);
+    digitalWrite(nSSELPin, HIGH);
   }
 
   return dataSize;
 }
 
-void CBERGCloud::timerReset(void)
+void BERGCloudArduino::timerReset(void)
 {
-  m_resetTime = millis();
+  resetTime = millis();
 }
 
-uint32_t CBERGCloud::timerRead_mS(void)
+uint32_t BERGCloudArduino::timerRead_mS(void)
 {
-  return millis() - m_resetTime;
+  return millis() - resetTime;
 }
 
-void CBERGCloud::begin(SPIClass *pSPI, uint8_t nSSELPin)
+void BERGCloudArduino::begin(SPIClass *_spi, uint8_t _nSSELPin)
 {
   /* Call base class method */
-  CBERGCloudBase::begin();
+  BERGCloudBase::begin();
 
   /* Configure nSSEL control pin */
-  m_nSSELPin = nSSELPin;
-  pinMode(m_nSSELPin, OUTPUT);
+  nSSELPin = _nSSELPin;
+  pinMode(nSSELPin, OUTPUT);
 
   /* Configure SPI */
-  m_pSPI = pSPI;
+  spi = _spi;
 
-  if (m_pSPI == NULL)
+  if (spi == NULL)
   {
-    _LOG("pSPI is NULL (CBERGCloudArduino::begin)\r\n");
+    _LOG("Spi is NULL (CBERGCloudArduino::begin)\r\n");
     return;
   }
 
-  m_pSPI->begin();
-  m_pSPI->setBitOrder(MSBFIRST);
-  m_pSPI->setDataMode(SPI_MODE0);
-  m_pSPI->setClockDivider(SPI_CLOCK_DIV4);
+  spi->begin();
+  spi->setBitOrder(MSBFIRST);
+  spi->setDataMode(SPI_MODE0);
+  spi->setClockDivider(SPI_CLOCK_DIV4);
 }
 
-void CBERGCloud::end()
+void BERGCloudArduino::end()
 {
   /* Deconfigure SPI */
-  if (m_pSPI != NULL)
+  if (spi != NULL)
   {
-    m_pSPI->end();
+    spi->end();
   }
 
   /* Deconfigure nSSEL control pin */
-  pinMode(m_nSSELPin, INPUT_PULLUP);
+  pinMode(nSSELPin, INPUT_PULLUP);
 
   /* Call base class method */
-  CBERGCloudBase::end();
+  BERGCloudBase::end();
 }
 
-bool CBERGCloud::print(String& s)
+bool BERGCloudArduino::display(String& s)
 {
   uint8_t text[BC_PRINT_MAX_CHARS + 1]; /* +1 for null terminator */
 
   /* Convert to C string */
   s.getBytes(text, sizeof(text));
 
-  /* Print */
-  return print((const char *)text);
+  return display((const char *)text);
+}
+
+uint16_t BERGCloudArduino::getHostType(void)
+{
+  return BC_HOST_ARDUINO;
 }
 
 #ifdef BERGCLOUD_PACK_UNPACK
 
-bool CMessage::pack(double& n)
+bool BERGCloudMessage::pack(double& n)
 {
   /* For 16-bit Arduino platforms we can treat a double literal */
   /* value as as float; this is so pack(1.234) will work. */
@@ -135,7 +139,7 @@ bool CMessage::pack(double& n)
   return false;
 }
 
-bool CMessage::pack(String& s)
+bool BERGCloudMessage::pack(String& s)
 {
   uint16_t strLen = s.length();
   uint32_t i = 1; /* Character index starts at one */
@@ -155,7 +159,7 @@ bool CMessage::pack(String& s)
   return true;
 }
 
-bool CMessage::unpack(String& s)
+bool BERGCloudMessage::unpack(String& s)
 {
   uint16_t sizeInBytes;
 
@@ -177,23 +181,6 @@ bool CMessage::unpack(String& s)
   }
 
   return true;
-}
-
-void CMessage::print_bytes(void)
-{
-  uint16_t size = CBuffer::used();
-  uint8_t *data = CBuffer::ptr();
-
-  while (size-- > 0)
-  {
-    if (*data < 0x10)
-    {
-      Serial.print("0");
-    }
-    Serial.print(*data++, HEX);
-    Serial.print(" ");
-  }
-  Serial.println();
 }
 
 #endif // #ifdef BERGCLOUD_PACK_UNPACK

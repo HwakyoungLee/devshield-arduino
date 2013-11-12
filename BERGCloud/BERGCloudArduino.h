@@ -2,7 +2,7 @@
 
 BERGCloud library for Arduino
 
-Copyright (c) 2013 BERG Ltd. http://bergcloud.com/
+Copyright (c) 2013 BERG Cloud Ltd. http://bergcloud.com/
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -33,44 +33,43 @@ THE SOFTWARE.
 #include "BERGCloudBase.h"
 
 #ifdef BERGCLOUD_PACK_UNPACK
-#include "MessageBase.h"
+#include "BERGCloudMessageBase.h"
 #endif
 
-class CBERGCloud : public CBERGCloudBase
+class BERGCloudArduino : public BERGCloudBase
 {
 public:
-  void begin(SPIClass *_pSPI, uint8_t _nSSELPin);
+  void begin(SPIClass *_spi, uint8_t _nSSELPin);
   void end();
-  using CBERGCloudBase::print;
+  using BERGCloudBase::display;
   /* Methods using Arduino string class */
-  bool print(String& s);
+  bool display(String& s);
 private:
-  uint16_t SPITransaction(uint8_t *pDataOut, uint8_t *pDataIn, uint16_t dataSize, bool finalCS);
+  uint16_t SPITransaction(uint8_t *dataOut, uint8_t *dataIn, uint16_t dataSize, bool finalCS);
   void timerReset(void);
   uint32_t timerRead_mS(void);
-  uint8_t m_nSSELPin;
-  SPIClass *m_pSPI;
-  uint32_t m_resetTime;
+  uint16_t getHostType(void);
+  uint8_t nSSELPin;
+  SPIClass *spi;
+  uint32_t resetTime;
 };
 
 #ifdef BERGCLOUD_PACK_UNPACK
 
-class CMessage : public CMessageBase
+class BERGCloudMessage : public BERGCloudMessageBase
 {
 public:
-  using CMessageBase::pack;
-  using CMessageBase::unpack;
+  using BERGCloudMessageBase::pack;
+  using BERGCloudMessageBase::unpack;
   /* Pack a 4-byte double */
   bool pack(double& n);
   /* Methods using Arduino string class */
   bool pack(String& s);
   bool unpack(String& s);
-  /* Print the raw bytes of a message */
-  void print_bytes(void);
 };
 
 #endif // #ifdef BERGCLOUD_PACK_UNPACK
 
-extern CBERGCloud BERGCloud;
+extern BERGCloudArduino BERGCloud;
 
 #endif // #ifndef BERGCLOUDARDUINO_H

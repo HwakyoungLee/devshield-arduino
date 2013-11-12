@@ -1,8 +1,8 @@
 /*
 
-LogPrint.h
+Debug logging helpers
 
-Copyright (c) 2013 BERG Ltd. http://bergcloud.com/
+Copyright (c) 2013 BERG Cloud Ltd. http://bergcloud.com/
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,8 +24,8 @@ THE SOFTWARE.
 
 */
 
-#ifndef LOGPRINT_H
-#define LOGPRINT_H
+#ifndef BERGCLOUDLOGPRINT_H
+#define BERGCLOUDLOGPRINT_H
 
 #ifdef BERGCLOUD_LOG
 #ifdef ARDUINO
@@ -37,12 +37,14 @@ THE SOFTWARE.
 #define PROGMEM __attribute__((section(".progmem.data")))
 #endif // #ifdef PROGMEM
 #define _LOG(x) Serial.print(F(x))
+#define _LOG_HEX(x) if ((x) < 0x10) Serial.print(F("0")); Serial.print((x), HEX)
 #else // #ifdef ARDUINO
 #include <stdio.h>
-#define _LOG(x) printf(x);
+#define _LOG(x) printf(x)
+#define _LOG_HEX(x) printf("%02X", (x))
 #endif // #ifdef ARDUINO
 #else // #ifdef BERGCLOUD_LOG
 #define _LOG(x)
 #endif // #ifdef BERGCLOUD_LOG
 
-#endif // #ifndef LOGPRINT_H
+#endif // #ifndef BERGCLOUDLOGPRINT_H

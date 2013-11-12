@@ -2,7 +2,7 @@
 
 BERGCloud constant definitions
 
-Copyright (c) 2013 BERG Ltd. http://bergcloud.com/
+Copyright (c) 2013 BERG Cloud Ltd. http://bergcloud.com/
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -28,10 +28,10 @@ THE SOFTWARE.
  * Sizes of things
  */
 
-#define BC_EUI64_SIZE_BYTES             8
-#define BC_ADDRESS_SIZE_BYTES           8
+#define BC_EUI64_SIZE_BYTES            8
+#define BC_ADDRESS_SIZE_BYTES          8
 #define BC_CLAIMCODE_SIZE_BYTES        20
-#define BC_PRODUCT_ID_SIZE_BYTES       16
+#define BC_PRODUCT_KEY_SIZE_BYTES      16
 #define BC_PRINT_MAX_CHARS             26
 
 /*
@@ -61,7 +61,7 @@ THE SOFTWARE.
  * SPI bus commands
  */
 
-#define SPI_CMD_GET_NETWORK_STATE      0x80
+#define SPI_CMD_GET_CONNECT_STATE      0x80
 #define SPI_CMD_GET_CLAIMCODE          0x81
 #define SPI_CMD_GET_CLAIM_STATE        0x82
 #define SPI_CMD_GET_SIGNAL_QUALITY     0x83
@@ -79,15 +79,21 @@ THE SOFTWARE.
 #define SPI_PROTOCOL_PENDING           0xfa
 #define SPI_PROTOCOL_RESET             0xf5
 
-/* For SPI_CMD_GET_NETWORK_STATE */
-#define BC_NETWORK_STATE_CONNECTED     0x00
-#define BC_NETWORK_STATE_CONNECTING    0x01
-#define BC_NETWORK_STATE_DISCONNECTED  0x02
+/* For SPI_CMD_GET_CONNECT_STATE */
+#define BC_CONNECT_STATE_CONNECTED     0x00
+#define BC_CONNECT_STATE_CONNECTING    0x01
+#define BC_CONNECT_STATE_DISCONNECTED  0x02
 
 /* For SPI_CMD_GET_EUI64 */
 #define BC_EUI64_NODE                  0x00
 #define BC_EUI64_PARENT                0x01
 #define BC_EUI64_COORDINATOR           0x02
+
+/* For SPI_CMD_SEND_PRODUCT_ANNOUNCE */
+#define BC_HOST_UNKNOWN                0x0000
+#define BC_HOST_ARDUINO                0x1000
+#define BC_HOST_MBED                   0x2000
+#define BC_HOST_LINUX                  0x3000
 
 /* For SPI_CMD_GET_CLAIM_STATE */
 #define BC_CLAIM_STATE_CLAIMED         0x00
