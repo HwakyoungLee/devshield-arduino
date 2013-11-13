@@ -11,11 +11,11 @@
 #include <BERGCloud.h>
 #include <SPI.h>
 
-// These values should be edited to reflect your Product setup on bergcloud.com
+// These values should be edited to reflect your Project setup on bergcloud.com
 
-#define PRODUCT_VERSION 0x00000001
+#define VERSION 0x0001
 
-const uint8_t PRODUCT_KEY[BC_PRODUCT_KEY_SIZE_BYTES] =  \
+const uint8_t PROJECT_KEY[BC_KEY_SIZE_BYTES] =  \
     { 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
       0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 };
 
@@ -36,7 +36,7 @@ void setup()
   Serial.println("--- reset ---");
   counter = 0;
 
-  if (BERGCloud.connect(PRODUCT_KEY, PRODUCT_VERSION))
+  if (BERGCloud.connect(PROJECT_KEY, VERSION))
   {
     Serial.println("Connected to network");
   }
