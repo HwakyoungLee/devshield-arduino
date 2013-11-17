@@ -512,20 +512,6 @@ void BERGCloudMessageBase::print_bytes(void)
   }
   _LOG("\r\n");
 }
-
-void CMessageBase::print_bytes(void)
-{
-  uint16_t size = used();
-  uint8_t *data = ptr();
-
-  while (size-- > 0)
-  {
-    _LOG_HEX(*data);
-    _LOG(" ");
-    data++;
-  }
-  _LOG("\r\n");
-}
 #endif
 
 bool BERGCloudMessageBase::getUnsignedInteger(uint32_t *value, uint8_t maxBytes)
