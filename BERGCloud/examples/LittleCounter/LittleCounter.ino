@@ -133,7 +133,7 @@ void handleSetCounter(BERGCloudMessage &command) {
   if (command.unpack(newCounterVal)) {
     
     Serial.print("Decoded newCounterVal as: ");
-    Serial.println(number, DEC);
+    Serial.println(newCounterVal, DEC);
     
     // Set the global to our new value
     counter = newCounterVal;
