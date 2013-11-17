@@ -1,23 +1,22 @@
 /*
-    SimpleCounterPacked - A simple demonstration of how you use the
-                          BERG Cloud Arduino client libraries to
-                          fetch and send automatically packed data
-                          to BERG Cloud. For more info see
-                          http://bergcloud.com/
-
+    APIDemonstrator - A simple demonstration of how you use the
+                      BERG Cloud Arduino client library to interact
+                      with the Devshield. For more info see
+                      http://bergcloud.com/
+                            
     This example code is in the public domain.
 
-    https://github.com/bergcloud/devboard-clientlib-arduino
+    https://github.com/bergcloud/devshield-arduino
 */
 
 #include <BERGCloud.h>
 #include <SPI.h>
 
-// These values should be edited to reflect your Product setup on bergcloud.com
+// These values should be edited to reflect your Project setup on bergcloud.com
 
-#define PRODUCT_VERSION 0x00000001
+#define VERSION 0x0001
 
-const uint8_t PRODUCT_KEY[BC_PRODUCT_KEY_SIZE_BYTES] =  \
+const uint8_t PROJECT_KEY[BC_KEY_SIZE_BYTES] =  \
     { 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
       0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 };
 
@@ -38,7 +37,7 @@ void setup()
   Serial.println("--- reset ---");
   counter = 0;
 
-  if (BERGCloud.connect(PRODUCT_KEY, PRODUCT_VERSION))
+  if (BERGCloud.connect(PROJECT_KEY, VERSION))
   {
     Serial.println("Connected to network");
   }
@@ -58,9 +57,9 @@ void loop()
   uint8_t commandID;
   int8_t rssi;
   uint8_t lqi;
-  CMessage command, event;
+  BERGCloudMessage command, event;
   String text;
-  unsigned int value;
+  int number;
   
   delay(1000);
 
@@ -74,10 +73,13 @@ void loop()
 
     command.print();
 
-    if (command.unpack(value))
+    // Try to decode the two common types of serialized
+    // data: An integer and a string
+    
+    if (command.unpack(number))
     {
-      Serial.print("got value = ");
-      Serial.println(value);
+      Serial.print("got number = ");
+      Serial.println(number);
     }
     else
     {
