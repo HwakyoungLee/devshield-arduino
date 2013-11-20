@@ -137,8 +137,8 @@ void handleSetCounter(BERGCloudMessage &command) {
     BERGCloud.clearDisplay();
     
     // Print in reverse order
-    BERGCloud.display(counterText.c_str());
     BERGCloud.display(prefixText.c_str());
+    BERGCloud.display(counterText.c_str());
   } else {
     Serial.println("WARNING: unpacking the new counter value failed");
   }
