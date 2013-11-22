@@ -13,22 +13,24 @@
 #include <SPI.h>
 
 // These values should be edited to reflect your Project setup on bergcloud.com
+#define VERSION 1
 
-#define VERSION 0x0001
+// The Project Key ties this code into a Project on developer.bergcloud.com
+// It's left empty and invalid here as this example deals only with the BERGCloud libary API. 
+// To use this code with a Device Web Service you will need a valid Project Key.
+// Calls the the BERGCloud API are displayed on the serial port at 115200 baud.
 
-const uint8_t PROJECT_KEY[BC_KEY_SIZE_BYTES] =  \
+const byte PROJECT_KEY[BC_KEY_SIZE_BYTES] =  \
     { 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
       0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 };
 
-// Define your commands and events here, according to the schema from bergcloud.com
-
-#define EXAMPLE_EVENT_ID 0x01
-
-// DO NOT CHANGE DEFINES BELOW THIS LINE
-
 #define nSSEL_PIN 10
+//You should not need to change nSSEL_PIN unless you are using a Mega or Leonardo
 
-uint32_t counter;
+// Define your commands and events here, according to the schema from bergcloud.com
+#define EXAMPLE_EVENT_ID 1
+
+unsigned int counter;
 
 void setup()
 {
@@ -49,14 +51,14 @@ void setup()
 
 void loop()
 {
-  uint8_t a;
-  uint8_t eui64[BC_EUI64_SIZE_BYTES];
-  uint8_t address[BC_ADDRESS_SIZE_BYTES];
+  byte a;
+  byte eui64[BC_EUI64_SIZE_BYTES];
+  byte address[BC_ADDRESS_SIZE_BYTES];
   char claimcode[BC_CLAIMCODE_SIZE_BYTES];
-  uint32_t i;
-  uint8_t commandID;
-  int8_t rssi;
-  uint8_t lqi;
+  int i;
+  byte commandID;
+  signed char rssi;
+  byte lqi;
   BERGCloudMessage command, event;
   String text;
   int number;

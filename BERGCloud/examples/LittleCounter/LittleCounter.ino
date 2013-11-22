@@ -10,23 +10,25 @@
 
 #include <BERGCloud.h>
 #include <SPI.h>
-#define nSSEL_PIN 10 // SPI Slave select definition - DO NOT EDIT
+
+#define nSSEL_PIN 10 // SPI Slave select definition -
+//You should not need to change nSSEL_PIN unless you are using a Mega or Leonardo
 
 // The Project Key ties this code into a Project on developer.bergcloud.com
-const uint8_t PROJECT_KEY[BC_KEY_SIZE_BYTES] = \
+const byte PROJECT_KEY[BC_KEY_SIZE_BYTES] = \
     {0x8B,0x05,0xF7,0x25,0x10,0x54,0x0A,0xE4,0x7C,0x35,0xEE,0xE7,0x26,0xDC,0xD5,0xA8};
 
 // The version of your code
-#define VERSION 0x0001
+#define VERSION 1
 
 // Define your commands and events here, according to the schema from bergcloud.com
 
-#define COMMAND_SET_COUNTER 0x01
-#define COMMAND_DISPLAY_TEXT 0x02
-#define EVENT_COUNTER_CHANGED 0x01
+#define COMMAND_SET_COUNTER 1
+#define COMMAND_DISPLAY_TEXT 2
+#define EVENT_COUNTER_CHANGED 3
 
 // The counter we will increment and send up to the cloud
-int32_t counter;
+unsigned int counter;
 
 void setup()
 {
@@ -48,7 +50,7 @@ void setup()
 void loop()
 { 
   // The ID of the command we've received. 
-  uint8_t commandID;
+  byte commandID;
   
   // The command and event objects we use below    
   BERGCloudMessage command, event;
@@ -118,7 +120,7 @@ void loop()
 
 void handleSetCounter(BERGCloudMessage &command) {
   String prefixText, counterText;
-  int32_t newCounterVal;
+  int newCounterVal;
   
   prefixText = "Counter set to";
 
@@ -137,8 +139,8 @@ void handleSetCounter(BERGCloudMessage &command) {
     BERGCloud.clearDisplay();
     
     // Print in reverse order
-    BERGCloud.display(prefixText.c_str());
-    BERGCloud.display(counterText.c_str());
+    BERGCloud.display(prefixText);
+    BERGCloud.display(counterText);
   } else {
     Serial.println("WARNING: unpacking the new counter value failed");
   }
@@ -146,7 +148,7 @@ void handleSetCounter(BERGCloudMessage &command) {
 
 void handleDisplayText(BERGCloudMessage &command) {
   String prefixText, suffixText, finalText;
-  int32_t number;
+  int number;
   
   prefixText = "Hello, ";
 
@@ -162,7 +164,7 @@ void handleDisplayText(BERGCloudMessage &command) {
 
     // Show the string on the OLED screen with display()
     BERGCloud.clearDisplay();
-    BERGCloud.display(finalText.c_str());
+    BERGCloud.display(finalText);
   } else {
     Serial.println("WARNING: unpacking text failed");
   }
