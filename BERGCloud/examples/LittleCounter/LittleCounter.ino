@@ -25,7 +25,7 @@ const byte PROJECT_KEY[BC_KEY_SIZE_BYTES] = \
 
 #define COMMAND_SET_COUNTER 1
 #define COMMAND_DISPLAY_TEXT 2
-#define EVENT_COUNTER_CHANGED 3
+#define EVENT_COUNTER_CHANGED 1
 
 // The counter we will increment and send up to the cloud
 unsigned int counter;
