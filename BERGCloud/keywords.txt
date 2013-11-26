@@ -35,3 +35,26 @@ BC_CLAIM_STATE_NOT_CLAIMED	LITERAL1
 BC_DISPLAY_STYLE_ONE_LINE	LITERAL1
 BC_DISPLAY_STYLE_TWO_LINES	LITERAL1
 BC_DISPLAY_STYLE_FOUR_LINES	LITERAL1
+
+# Syntax Coloring Map for BERGCloudMessage
+
+# Datatypes (KEYWORD1)
+BERGCloudMessage	KEYWORD1
+
+# Methods and Functions (KEYWORD2)
+pack	KEYWORD2
+pack_nil	KEYWORD2
+pack_array	KEYWORD2
+pack_map	KEYWORD2
+unpack	KEYWORD2
+unpack_nil	KEYWORD2
+unpack_array	KEYWORD2
+unpack_map	KEYWORD2
+unpack_peek	KEYWORD2
+print	KEYWORD2
+print_bytes	KEYWORD2
+unpack_skip	KEYWORD2
+unpack_restart	KEYWORD2
+unpack_find	KEYWORD2
+
+# Constants (LITERAL1)

@@ -29,7 +29,7 @@ const uint8_t PROJECT_KEY[BC_KEY_SIZE_BYTES] = \
 
 #define COMMAND_SET_COUNTER 0x01
 #define COMMAND_DISPLAY_TEXT 0x02
-#define EVENT_SEND_COUNTER 0x01
+#define EVENT_COUNTER_CHANGED 0x01
 
 
 // The counter we will increment and send up to the cloud
@@ -93,7 +93,7 @@ void loop()
   }
   
   ///////////////////////////////////////////////////////////////
-  // Sending events                                          //
+  // Sending events                                            //
   ///////////////////////////////////////////////////////////////
 
   Serial.print("Sending an event... ");
@@ -111,7 +111,7 @@ void loop()
   event.pack(counter); // Pack an unsigned int32
   
   // Send the event object
-  if (BERGCloud.sendEvent(EVENT_SEND_COUNTER, event))  {
+  if (BERGCloud.sendEvent(EVENT_COUNTER_CHANGED, event))  {
     Serial.println("ok");
   } else {
     Serial.println("failed/busy");
