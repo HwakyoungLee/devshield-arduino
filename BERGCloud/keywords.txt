@@ -13,6 +13,7 @@ getSignalQuality	KEYWORD2
 connect	KEYWORD2
 getClaimingState	KEYWORD2
 getClaimcode	KEYWORD2
+getConnectionState	KEYWORD2
 getEUI64	KEYWORD2
 setDisplayStyle	KEYWORD2
 clearDisplay	KEYWORD2
