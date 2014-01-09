@@ -8,6 +8,9 @@ see http://bergcloud.com/devkit/
 
 Copy the BERGCloud/ directory into your Arduino libraries folder.
 
+## Documentation
+See http://remote.bergcloud.com/developers/platform/reference/software/client-library for a description of the methods and examples.
+
 ## Copyright
 
 Copyright (c) 2013 BERG Cloud Ltd. See LICENSE.txt for further details.
