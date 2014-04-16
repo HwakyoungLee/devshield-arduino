@@ -142,7 +142,7 @@ bool BERGCloudMessage::pack(double& n)
 bool BERGCloudMessage::pack(String& s)
 {
   uint16_t strLen = s.length();
-  uint32_t i = 1; /* Character index starts at one */
+  uint32_t i = 0;
 
   /* Add header */
   if (!pack_raw_header(strLen))
@@ -181,6 +181,46 @@ bool BERGCloudMessage::unpack(String& s)
   }
 
   return true;
+}
+
+bool BERGCloudMessage::pack_boolean(boolean n)
+{
+  return pack((bool)n);
+}
+
+bool BERGCloudMessage::unpack_boolean(boolean &n)
+{
+  bool a;
+  if (!unpack(a))
+  {
+    return false;
+  }
+
+  n = (boolean)a;
+  return true;
+}
+
+bool BERGCloudArduino::pollForCommand(BERGCloudMessageBuffer& buffer, String &commandName)
+{
+  bool result = false;
+  char tmp[31 + 1]; /* +1 for null terminator */
+
+  commandName = ""; /* Empty string */
+  result = pollForCommand(buffer, tmp, sizeof(tmp));
+
+  if (result)
+  {
+    commandName = String(tmp);
+  }
+
+  return result;
+}
+
+bool BERGCloudArduino::sendEvent(String& eventName, BERGCloudMessageBuffer& buffer)
+{
+  uint8_t temp[eventName.length() + 1]; /* +1 for null terminator */
+  eventName.getBytes(temp, sizeof(temp));
+  return sendEvent((const char *)temp, buffer);
 }
 
 #endif // #ifdef BERGCLOUD_PACK_UNPACK

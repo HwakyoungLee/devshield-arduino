@@ -41,9 +41,15 @@ class BERGCloudArduino : public BERGCloudBase
 public:
   void begin(SPIClass *_spi, uint8_t _nSSELPin);
   void end();
-  using BERGCloudBase::display;
   /* Methods using Arduino string class */
+  using BERGCloudBase::display;
   bool display(String& s);
+  using BERGCloudBase::pollForCommand;
+  bool pollForCommand(BERGCloudMessageBuffer& buffer, String& commandName);
+#ifdef BERGCLOUD_PACK_UNPACK
+  using BERGCloudBase::sendEvent;
+  bool sendEvent(String& eventName, BERGCloudMessageBuffer& buffer);
+#endif
 private:
   uint16_t SPITransaction(uint8_t *dataOut, uint8_t *dataIn, uint16_t dataSize, bool finalCS);
   void timerReset(void);
@@ -66,6 +72,9 @@ public:
   /* Methods using Arduino string class */
   bool pack(String& s);
   bool unpack(String& s);
+  /* Methods using Arduino boolean type */
+  bool pack_boolean(boolean n);
+  bool unpack_boolean(boolean& n);
 };
 
 #endif // #ifdef BERGCLOUD_PACK_UNPACK
