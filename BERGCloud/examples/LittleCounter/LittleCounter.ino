@@ -10,16 +10,11 @@
 
 #include <BERGCloud.h>
 #include <SPI.h>
-#define nSSEL_PIN 10 // SPI Slave select definition - DO NOT EDIT
+#define nSSEL_PIN 10 // SPI Slave select definition - 
+//You should not need to change nSSEL_PIN unless you are using a Mega or Leonardo
 
-// These two methods correspond to the two commands defined within the Little Counter
-// project on the BERG Cloud developer site
-
-void handleSetCounter(BERGCloudMessage&);
-void handleDisplayText(BERGCloudMessage&);
-
-// The Project Key ties this code into a Project on developer.bergcloud.com
-const uint8_t PROJECT_KEY[BC_KEY_SIZE_BYTES] = \
+// The Project Key ties this code into a Project on bergcloud.com
+const byte PROJECT_KEY[BC_KEY_SIZE_BYTES] = \
     {0x8B,0x05,0xF7,0x25,0x10,0x54,0x0A,0xE4,0x7C,0x35,0xEE,0xE7,0x26,0xDC,0xD5,0xA8};
 
 // The version of your code

@@ -30,21 +30,24 @@ THE SOFTWARE.
 #ifdef BERGCLOUD_LOG
 #ifdef ARDUINO
 #include <Arduino.h>
+extern uint8_t BC_LOG;
 // Workaround for http://gcc.gnu.org/bugzilla/show_bug.cgi?id=34734
 // Credit: http://forum.arduino.cc/index.php/topic,85840.0.html
 #ifdef PROGMEM
 #undef PROGMEM
 #define PROGMEM __attribute__((section(".progmem.data")))
 #endif // #ifdef PROGMEM
-#define _LOG(x) Serial.print(F(x))
-#define _LOG_HEX(x) if ((x) < 0x10) Serial.print(F("0")); Serial.print((x), HEX)
+#define _LOG(x) if (BC_LOG) {Serial.print(F(x));}
+#define _LOG_HEX(x) if (BC_LOG) {if ((x) < 0x10) Serial.print(F("0")); Serial.print((x), HEX);}
 #else // #ifdef ARDUINO
 #include <stdio.h>
-#define _LOG(x) printf(x)
-#define _LOG_HEX(x) printf("%02X", (x))
+extern uint8_t BC_LOG;
+#define _LOG(x) if (BC_LOG) {printf(x);}
+#define _LOG_HEX(x) if (BC_LOG) {printf("%02X", (x));}
 #endif // #ifdef ARDUINO
 #else // #ifdef BERGCLOUD_LOG
 #define _LOG(x)
+#define _LOG_HEX(x)
 #endif // #ifdef BERGCLOUD_LOG
 
 #endif // #ifndef BERGCLOUDLOGPRINT_H
