@@ -133,6 +133,34 @@ bool BERGCloudArduino::getClaimcode(String& claimcode)
 
   return result;
 }
+
+char hexTable[16] = {'0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'};
+
+void BERGCloudArduino::arrayToString(String& string, uint8_t *array, uint8_t items)
+{
+  uint8_t index = 0;
+  string = "";
+  while (items-- > 0)
+  {
+    string += hexTable[array[index] >> 4];
+    string += hexTable[array[index] & 0xf];
+    index++;
+  }
+}
+
+bool BERGCloudArduino::getDeviceAddress(String &address)
+{
+  uint8_t adr[BC_ADDRESS_SIZE_BYTES];
+  
+  if (!getDeviceAddress(adr))
+  {
+    return false;
+  }
+  
+  arrayToString(address, adr, BC_ADDRESS_SIZE_BYTES);
+  return true;
+}
+
 uint16_t BERGCloudArduino::getHostType(void)
 {
   return BC_HOST_ARDUINO;

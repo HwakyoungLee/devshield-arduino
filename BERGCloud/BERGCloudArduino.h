@@ -48,11 +48,14 @@ public:
   bool pollForCommand(BERGCloudMessageBuffer& buffer, String& commandName);
   using BERGCloudBase::getClaimcode;
   bool getClaimcode(String& claimcode);
+  using BERGCloudBase::getDeviceAddress;
+  bool getDeviceAddress(String &address);
 #ifdef BERGCLOUD_PACK_UNPACK
   using BERGCloudBase::sendEvent;
   bool sendEvent(String& eventName, BERGCloudMessageBuffer& buffer);
 #endif
 private:
+  void arrayToString(String& string, uint8_t *array, uint8_t items);
   uint16_t SPITransaction(uint8_t *dataOut, uint8_t *dataIn, uint16_t dataSize, bool finalCS);
   void timerReset(void);
   uint32_t timerRead_mS(void);
