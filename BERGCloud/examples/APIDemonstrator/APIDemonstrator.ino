@@ -51,7 +51,7 @@ void loop()
 {
   uint8_t a;
   uint8_t eui64[BC_EUI64_SIZE_BYTES];
-  uint8_t address[BC_ADDRESS_SIZE_BYTES];
+  uint8_t address[BC_ID_SIZE_BYTES];
   char claimcode[BC_CLAIMCODE_SIZE_BYTES];
   uint32_t i;
   uint8_t commandID;
@@ -244,9 +244,9 @@ void loop()
     Serial.println("getSignalQuality returned false.");
   }
 
-  if (BERGCloud.getDeviceAddress(address))
+  if (BERGCloud.getDeviceID(address))
   {
-    Serial.print("Device Address: 0x");
+    Serial.print("Device ID: 0x");
     for (i=0; i < sizeof(address); i++)
     {
       if (address[7-i] < 0x10)
@@ -259,7 +259,7 @@ void loop()
   }
   else
   {
-    Serial.println("getDeviceAddress() returned false.");
+    Serial.println("getDeviceID() returned false.");
   }
 
 }

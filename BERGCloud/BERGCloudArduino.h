@@ -48,8 +48,8 @@ public:
   bool pollForCommand(BERGCloudMessageBuffer& buffer, String& commandName);
   using BERGCloudBase::getClaimcode;
   bool getClaimcode(String& claimcode);
-  using BERGCloudBase::getDeviceAddress;
-  bool getDeviceAddress(String &address);
+  using BERGCloudBase::getDeviceID;
+  bool getDeviceID(String &address);
 #ifdef BERGCLOUD_PACK_UNPACK
   using BERGCloudBase::sendEvent;
   bool sendEvent(String& eventName, BERGCloudMessageBuffer& buffer);

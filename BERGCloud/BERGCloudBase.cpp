@@ -802,7 +802,7 @@ bool BERGCloudBase::getEUI64(uint8_t type, uint8_t (&eui64)[BC_EUI64_SIZE_BYTES]
   return transaction(&tr);
 }
 
-bool BERGCloudBase::getDeviceAddress(uint8_t (&address)[BC_ADDRESS_SIZE_BYTES])
+bool BERGCloudBase::getDeviceID(uint8_t (&address)[BC_ID_SIZE_BYTES])
 {
   _BC_SPI_TRANSACTION tr;
 

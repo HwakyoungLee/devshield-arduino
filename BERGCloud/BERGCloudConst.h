@@ -29,7 +29,7 @@ THE SOFTWARE.
  */
 
 #define BC_EUI64_SIZE_BYTES            8
-#define BC_ADDRESS_SIZE_BYTES          8
+#define BC_ID_SIZE_BYTES          8
 #define BC_CLAIMCODE_SIZE_BYTES        20
 #define BC_KEY_SIZE_BYTES              16
 #define BC_PRINT_MAX_CHARS             26

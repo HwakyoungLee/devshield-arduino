@@ -88,8 +88,8 @@ public:
   virtual bool getClaimcode(const char (&claimcode)[BC_CLAIMCODE_SIZE_BYTES]);
   /* Get the EUI64 identifier for this node, its parent or the network coordinator */
   virtual bool getEUI64(uint8_t type, uint8_t (&eui64)[BC_EUI64_SIZE_BYTES]);
-  /* Get the Device Address */
-  virtual bool getDeviceAddress(uint8_t (&address)[BC_ADDRESS_SIZE_BYTES]);
+  /* Get the Device ID */
+  virtual bool getDeviceID(uint8_t (&address)[BC_ID_SIZE_BYTES]);
   /* Set the display style for the OLED display. This also clears the display. */
   bool setDisplayStyle(uint8_t style);
   /* Clear the OLED display */

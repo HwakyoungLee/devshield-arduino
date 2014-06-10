@@ -148,16 +148,16 @@ void BERGCloudArduino::arrayToString(String& string, uint8_t *array, uint8_t ite
   }
 }
 
-bool BERGCloudArduino::getDeviceAddress(String &address)
+bool BERGCloudArduino::getDeviceID(String &address)
 {
-  uint8_t adr[BC_ADDRESS_SIZE_BYTES];
+  uint8_t adr[BC_ID_SIZE_BYTES];
   
-  if (!getDeviceAddress(adr))
+  if (!getDeviceID(adr))
   {
     return false;
   }
   
-  arrayToString(address, adr, BC_ADDRESS_SIZE_BYTES);
+  arrayToString(address, adr, BC_ID_SIZE_BYTES);
   return true;
 }
 
