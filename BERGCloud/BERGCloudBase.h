@@ -36,7 +36,7 @@ THE SOFTWARE.
 #include "BERGCloudMessageBuffer.h"
 #endif
 
-#define BERGCLOUD_LIB_VERSION (0x0200)
+#define BERGCLOUD_LIB_VERSION (0x0203)
 
 #define _TX_GROUPS (2)
 #define _RX_GROUPS (2)
